@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Form } from '../components/forms'
 import Resultado from '../components/resultado'
 import Tabela from '../components/tabela'
+import Header from '../components/header'
 
 interface CalculoData {
     resultado: number
@@ -20,10 +21,12 @@ export default function Home() {
     }
 
     return (
-        <div className="container mx-auto px-4 py-8 space-y-8">
-            <div className="max-w-4xl mx-auto">
-                <Form onCalculate={handleCalculate} />
-            </div>
+        <div>
+            <Header />
+            <div className="container mx-auto px-4 py-8 space-y-8">
+                <div className="max-w-4xl mx-auto">
+                    <Form onCalculate={handleCalculate} />
+                </div>
 
             {dadosCalculo && (
                 <div className="space-y-8">
@@ -52,6 +55,7 @@ export default function Home() {
                     </div>
                 </div>
             )}
+            </div>
         </div>
     )
 }
