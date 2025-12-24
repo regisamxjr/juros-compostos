@@ -115,7 +115,7 @@ export const Form = ({ onCalculate }: FormProps) => {
                 </h2>
             </div>
 
-            <form onSubmit={handleSubmit} className="bg-[#eef4ed] rounded-lg shadow-lg p-8">
+            <form onSubmit={handleSubmit} className="bg-[#e8f0f8] rounded-lg shadow-lg p-8">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                     <div className="space-y-6">
                         <div className="space-y-2">

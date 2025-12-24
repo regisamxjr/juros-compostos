@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { ChartContainer, ChartTooltipContent } from './ui/chart'
+import { ChartContainer } from './ui/chart'
 import { Area, AreaChart, ResponsiveContainer, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts'
 import { jurosComposto, jurosCompostosMensal, jurosCompostosComAporte, jurosCompostosComAporteAnual } from '../utils/formulas'
 
@@ -10,6 +10,46 @@ interface ResultadoProps {
     tempo: number
     unidadeTempo: 'anos' | 'meses'
     aporteMensal: number
+}
+
+const CustomTooltip = ({ active, payload, label }: any) => {
+    if (!active || !payload || !payload.length) {
+        return null
+    }
+
+    const getColor = (dataKey: string) => {
+        if (dataKey === 'totalJuros') return '#f97316'
+        if (dataKey === 'valorInvestido') return '#3b82f6'
+        return '#000'
+    }
+
+    return (
+        <div className="bg-white rounded-lg border border-gray-200 shadow-lg p-3 min-w-[180px]">
+            <p className="font-semibold text-sm text-gray-700 mb-2">{`Período: ${label}`}</p>
+            {payload.map((item: any, index: number) => {
+                const color = getColor(item.dataKey)
+                return (
+                    <div key={index} className="flex items-center gap-2 mb-1 last:mb-0">
+                        <div 
+                            className="w-3 h-3 rounded-sm"
+                            style={{ backgroundColor: color }}
+                        />
+                        <div className="flex-1 flex justify-between items-center">
+                            <span className="text-xs font-medium text-gray-600">{item.name}:</span>
+                            <span className="text-xs font-semibold text-gray-900 ml-2">
+                                R$ {typeof item.value === 'number' 
+                                    ? item.value.toLocaleString('pt-BR', { 
+                                        minimumFractionDigits: 2, 
+                                        maximumFractionDigits: 2 
+                                    })
+                                    : item.value}
+                            </span>
+                        </div>
+                    </div>
+                )
+            })}
+        </div>
+    )
 }
 
 export default function Resultado({ resultado, capital, taxa, tempo, unidadeTempo, aporteMensal }: ResultadoProps) {
@@ -94,18 +134,14 @@ export default function Resultado({ resultado, capital, taxa, tempo, unidadeTemp
         },
     }
 
-    // Calcular o domínio do eixo Y baseado nos dados
-    // O gráfico sempre começa do valor do aporte inicial
     const yAxisDomain = useMemo(() => {
         const valores = chartData.map(d => d.totalJuros)
         const maxValor = Math.max(...valores, capital)
-        const minValor = capital // Sempre começa do capital inicial
+        const minValor = capital 
         
-        // Adicionar uma margem de 5% acima
         const range = maxValor - minValor
         const padding = range * 0.05
         
-        // Se o range for muito pequeno, garantir um mínimo
         if (range < 100) {
             return [minValor, maxValor + 100]
         }
@@ -113,53 +149,87 @@ export default function Resultado({ resultado, capital, taxa, tempo, unidadeTemp
         return [minValor, maxValor + padding]
     }, [chartData, capital])
 
-    const valorTotalInvestido = useMemo(() => {
+    const valoresCards = useMemo(() => {
         const totalPeriodos = Math.ceil(tempo)
+        let valorTotalInvestido: number
+        
         if (unidadeTempo === 'anos') {
             if (aporteMensal > 0) {
                 const aporteAnual = aporteMensal * 12
-                return capital + (aporteAnual * totalPeriodos)
+                valorTotalInvestido = capital + (aporteAnual * totalPeriodos)
+            } else {
+                valorTotalInvestido = capital
             }
-            return capital
         } else {
             if (aporteMensal > 0) {
-                return capital + (aporteMensal * totalPeriodos)
+                valorTotalInvestido = capital + (aporteMensal * totalPeriodos)
+            } else {
+                valorTotalInvestido = capital
             }
-            return capital
         }
-    }, [capital, aporteMensal, tempo, unidadeTempo])
-
-    const jurosTotal = useMemo(() => {
-        return resultado - valorTotalInvestido
-    }, [resultado, valorTotalInvestido])
+        
+        const jurosTotal = resultado - valorTotalInvestido
+        
+        return {
+            valorTotal: resultado,
+            valorTotalInvestido,
+            jurosTotal
+        }
+    }, [resultado, capital, tempo, unidadeTempo, aporteMensal])
 
     return (
-        <div className="w-full space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="bg-[#eef4ed] rounded-lg shadow-md p-6 border-2 border-[#8da9c4]">
-                    <h3 className="text-sm font-semibold text-[#0b2545] mb-2">Valor Total</h3>
-                    <p className="text-2xl font-bold text-[#134074]">
-                        R$ {resultado.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+        <div className="w-full space-y-4">
+            <div className="text-center">
+                <h2 className="text-2xl font-bold">Resultado Final</h2>
+                <p className="text-3xl font-semibold text-primary mt-2">
+                    R$ {resultado.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                </p>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
+                <div className="bg-white rounded-lg shadow-md p-6 border border-gray-200">
+                    <h3 className="text-sm font-medium text-gray-600 mb-2">Valor Total</h3>
+                    <p className="text-2xl font-bold text-[#0b2545]">
+                        R$ {valoresCards.valorTotal.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                     </p>
+                    <p className="text-xs text-gray-500 mt-1">Valor final acumulado</p>
                 </div>
                 
-                <div className="bg-[#eef4ed] rounded-lg shadow-md p-6 border-2 border-[#8da9c4]">
-                    <h3 className="text-sm font-semibold text-[#0b2545] mb-2">Valor Total Investido</h3>
-                    <p className="text-2xl font-bold text-[#134074]">
-                        R$ {valorTotalInvestido.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                <div className="bg-white rounded-lg shadow-md p-6 border border-gray-200">
+                    <h3 className="text-sm font-medium text-gray-600 mb-2">Valor Total Investido</h3>
+                    <p className="text-2xl font-bold text-[#3b82f6]">
+                        R$ {valoresCards.valorTotalInvestido.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                     </p>
+                    <p className="text-xs text-gray-500 mt-1">Capital inicial + aportes</p>
                 </div>
                 
-                <div className="bg-[#eef4ed] rounded-lg shadow-md p-6 border-2 border-[#8da9c4]">
-                    <h3 className="text-sm font-semibold text-[#0b2545] mb-2">Juros Total</h3>
-                    <p className="text-2xl font-bold text-[#134074]">
-                        R$ {jurosTotal.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                <div className="bg-white rounded-lg shadow-md p-6 border border-gray-200">
+                    <h3 className="text-sm font-medium text-gray-600 mb-2">Juros Total</h3>
+                    <p className="text-2xl font-bold text-[#f97316]">
+                        R$ {valoresCards.jurosTotal.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                     </p>
+                    <p className="text-xs text-gray-500 mt-1">Rendimento obtido</p>
                 </div>
             </div>
             
             <div>
-                <h3 className="text-lg font-semibold mb-4 text-[#0b2545]">Gráfico:</h3>
+                <h3 className="text-lg text-center font-semibold mb-4 text-[#0b2545]">Gráfico:</h3>
+                
+                <div className="mb-4 flex flex-col sm:flex-row gap-4 justify-center items-start sm:items-center">
+                    <div className="flex items-center gap-3">
+                        <div className="w-4 h-4 bg-[#f97316] border-2 border-[#f97316]"></div>
+                        <div>
+                            <p className="font-semibold text-sm text-[#0b2545]">Total em juros</p>
+                        </div>
+                    </div>
+                    <div className="flex items-center gap-3">
+                        <div className="w-4 h-4  bg-[#3b82f6] border-2 border-[#3b82f6]"></div>
+                        <div>
+                            <p className="font-semibold text-sm text-[#0b2545]">Valor Investido</p>
+                        </div>
+                    </div>
+                </div>
+                
                 <ChartContainer config={chartConfig} className="h-[400px] w-full">
                     <ResponsiveContainer width="100%" height="100%">
                         <AreaChart
@@ -192,7 +262,7 @@ export default function Resultado({ resultado, capital, taxa, tempo, unidadeTemp
                                 className="text-xs"
                             />
                             <Tooltip 
-                                content={<ChartTooltipContent />}
+                                content={<CustomTooltip />}
                             />
                             <Area 
                                 type="monotone" 
@@ -217,24 +287,6 @@ export default function Resultado({ resultado, capital, taxa, tempo, unidadeTemp
                         </AreaChart>
                     </ResponsiveContainer>
                 </ChartContainer>
-                
-                {/* Legenda */}
-                <div className="mt-6 flex flex-col sm:flex-row gap-4 justify-center items-start sm:items-center">
-                    <div className="flex items-center gap-3">
-                        <div className="w-4 h-4 rounded-full bg-[#f97316] border-2 border-[#f97316]"></div>
-                        <div>
-                            <p className="font-semibold text-sm text-[#0b2545]">Total em juros</p>
-                            <p className="text-xs text-gray-600">Valor total acumulado (capital inicial + juros compostos)</p>
-                        </div>
-                    </div>
-                    <div className="flex items-center gap-3">
-                        <div className="w-4 h-4 rounded-full bg-[#3b82f6] border-2 border-[#3b82f6]"></div>
-                        <div>
-                            <p className="font-semibold text-sm text-[#0b2545]">Valor Investido</p>
-                            <p className="text-xs text-gray-600">Capital inicial + aportes acumulados</p>
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
     )
