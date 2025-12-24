@@ -181,9 +181,7 @@ export default function Resultado({ resultado, capital, taxa, tempo, unidadeTemp
         <div className="w-full space-y-4">
             <div className="text-center">
                 <h2 className="text-2xl font-bold">Resultado Final</h2>
-                <p className="text-3xl font-semibold text-primary mt-2">
-                    R$ {resultado.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                </p>
+                
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
