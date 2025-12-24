@@ -1,14 +1,15 @@
 import { useMemo } from 'react'
-import { jurosComposto, jurosCompostosMensal } from '../utils/formulas'
+import { jurosComposto, jurosCompostosMensal, jurosCompostosComAporte, jurosCompostosComAporteAnual } from '../utils/formulas'
 
 interface TabelaProps {
     capital: number
     taxa: number
     tempo: number
     unidadeTempo: 'anos' | 'meses'
+    aporteMensal: number
 }
 
-export default function Tabela({ capital, taxa, tempo, unidadeTempo }: TabelaProps) {
+export default function Tabela({ capital, taxa, tempo, unidadeTempo, aporteMensal }: TabelaProps) {
     const dados = useMemo(() => {
         const linhas = []
         const taxaDecimal = taxa / 100
@@ -17,27 +18,42 @@ export default function Tabela({ capital, taxa, tempo, unidadeTempo }: TabelaPro
         for (let i = 0; i <= totalPeriodos; i++) {
             let valorAnterior: number
             let valorAtual: number
+            let aportePeriodo: number = 0
             
             if (unidadeTempo === 'anos') {
-                valorAnterior = i === 0 ? capital : jurosComposto(capital, taxaDecimal, i - 1)
-                valorAtual = jurosComposto(capital, taxaDecimal, i)
+                if (aporteMensal > 0) {
+                    const aporteAnual = aporteMensal * 12
+                    valorAnterior = i === 0 ? capital : jurosCompostosComAporteAnual(capital, taxaDecimal, i - 1, aporteAnual)
+                    valorAtual = jurosCompostosComAporteAnual(capital, taxaDecimal, i, aporteAnual)
+                    aportePeriodo = i > 0 ? aporteAnual : 0
+                } else {
+                    valorAnterior = i === 0 ? capital : jurosComposto(capital, taxaDecimal, i - 1)
+                    valorAtual = jurosComposto(capital, taxaDecimal, i)
+                }
             } else {
-                valorAnterior = i === 0 ? capital : jurosCompostosMensal(capital, taxaDecimal, i - 1)
-                valorAtual = jurosCompostosMensal(capital, taxaDecimal, i)
+                if (aporteMensal > 0) {
+                    valorAnterior = i === 0 ? capital : jurosCompostosComAporte(capital, taxaDecimal, i - 1, aporteMensal)
+                    valorAtual = jurosCompostosComAporte(capital, taxaDecimal, i, aporteMensal)
+                    aportePeriodo = i > 0 ? aporteMensal : 0
+                } else {
+                    valorAnterior = i === 0 ? capital : jurosCompostosMensal(capital, taxaDecimal, i - 1)
+                    valorAtual = jurosCompostosMensal(capital, taxaDecimal, i)
+                }
             }
             
-            const juros = valorAtual - valorAnterior
+            const juros = valorAtual - valorAnterior - aportePeriodo
             
             linhas.push({
                 periodo: i,
                 capitalInicial: Number(valorAnterior.toFixed(2)),
+                aporte: Number(aportePeriodo.toFixed(2)),
                 juros: Number(juros.toFixed(2)),
                 total: Number(valorAtual.toFixed(2))
             })
         }
         
         return linhas
-    }, [capital, taxa, tempo, unidadeTempo])
+    }, [capital, taxa, tempo, unidadeTempo, aporteMensal])
 
     return (
         <div className="w-full overflow-x-auto">
@@ -48,6 +64,9 @@ export default function Tabela({ capital, taxa, tempo, unidadeTempo }: TabelaPro
                             {unidadeTempo === 'anos' ? 'Ano' : 'Mês'}
                         </th>
                         <th className="border border-gray-300 px-4 py-2 text-right">Capital Inicial</th>
+                        <th className="border border-gray-300 px-4 py-2 text-right">
+                            Aporte {unidadeTempo === 'anos' ? 'Anual' : 'Mensal'}
+                        </th>
                         <th className="border border-gray-300 px-4 py-2 text-right">Juros</th>
                         <th className="border border-gray-300 px-4 py-2 text-right">Total</th>
                     </tr>
@@ -60,6 +79,9 @@ export default function Tabela({ capital, taxa, tempo, unidadeTempo }: TabelaPro
                             </td>
                             <td className="border border-gray-300 px-4 py-2 text-right">
                                 R$ {linha.capitalInicial.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                            </td>
+                            <td className="border border-gray-300 px-4 py-2 text-right">
+                                R$ {linha.aporte.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                             </td>
                             <td className="border border-gray-300 px-4 py-2 text-right">
                                 R$ {linha.juros.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}

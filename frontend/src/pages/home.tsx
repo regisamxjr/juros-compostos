@@ -47,6 +47,7 @@ export default function Home() {
                             taxa={dadosCalculo.taxa}
                             tempo={dadosCalculo.tempo}
                             unidadeTempo={dadosCalculo.unidadeTempo}
+                            aporteMensal={dadosCalculo.aporteMensal}
                         />
                     </div>
                 </div>

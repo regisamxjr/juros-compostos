@@ -113,13 +113,49 @@ export default function Resultado({ resultado, capital, taxa, tempo, unidadeTemp
         return [minValor, maxValor + padding]
     }, [chartData, capital])
 
+    const valorTotalInvestido = useMemo(() => {
+        const totalPeriodos = Math.ceil(tempo)
+        if (unidadeTempo === 'anos') {
+            if (aporteMensal > 0) {
+                const aporteAnual = aporteMensal * 12
+                return capital + (aporteAnual * totalPeriodos)
+            }
+            return capital
+        } else {
+            if (aporteMensal > 0) {
+                return capital + (aporteMensal * totalPeriodos)
+            }
+            return capital
+        }
+    }, [capital, aporteMensal, tempo, unidadeTempo])
+
+    const jurosTotal = useMemo(() => {
+        return resultado - valorTotalInvestido
+    }, [resultado, valorTotalInvestido])
+
     return (
-        <div className="w-full space-y-4">
-            <div className="text-center">
-                <h2 className="text-2xl font-bold">Resultado Final</h2>
-                <p className="text-3xl font-semibold text-primary mt-2">
-                    R$ {resultado.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                </p>
+        <div className="w-full space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="bg-[#eef4ed] rounded-lg shadow-md p-6 border-2 border-[#8da9c4]">
+                    <h3 className="text-sm font-semibold text-[#0b2545] mb-2">Valor Total</h3>
+                    <p className="text-2xl font-bold text-[#134074]">
+                        R$ {resultado.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                    </p>
+                </div>
+                
+                <div className="bg-[#eef4ed] rounded-lg shadow-md p-6 border-2 border-[#8da9c4]">
+                    <h3 className="text-sm font-semibold text-[#0b2545] mb-2">Valor Total Investido</h3>
+                    <p className="text-2xl font-bold text-[#134074]">
+                        R$ {valorTotalInvestido.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                    </p>
+                </div>
+                
+                <div className="bg-[#eef4ed] rounded-lg shadow-md p-6 border-2 border-[#8da9c4]">
+                    <h3 className="text-sm font-semibold text-[#0b2545] mb-2">Juros Total</h3>
+                    <p className="text-2xl font-bold text-[#134074]">
+                        R$ {jurosTotal.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                    </p>
+                </div>
             </div>
             
             <div>
