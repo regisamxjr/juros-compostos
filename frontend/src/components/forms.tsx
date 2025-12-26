@@ -128,7 +128,7 @@ export const Form = ({ onCalculate }: FormProps) => {
                             <input 
                                 id="capital"
                                 type="text" 
-                                placeholder="Digite o valor do capital (pode ser 0)" 
+                                placeholder="Digite o valor do capital" 
                                 value={capital}
                                 onChange={handleCapitalChange}
                                 className="w-full px-4 py-3 rounded-lg border-2 border-[#8da9c4] bg-white text-[#0b2545] placeholder-gray-400 focus:outline-none focus:border-[#134074] focus:ring-2 focus:ring-[#134074]/20 transition-all duration-200"
@@ -195,8 +195,8 @@ export const Form = ({ onCalculate }: FormProps) => {
                             </label>
                             <input 
                                 id="aporte-mensal"
-                                type="text" 
-                                placeholder={`Digite o aporte ${unidadeTempo === 'anos' ? 'anual' : 'mensal'} (pode ser 0)`}
+                                  type="text" 
+                                placeholder={`Digite o aporte ${unidadeTempo === 'anos' ? 'anual' : 'mensal'}`}
                                 value={aporteMensal}
                                 onChange={handleAporteChange}
                                 className="w-full px-4 py-3 rounded-lg border-2 border-[#8da9c4] bg-white text-[#0b2545] placeholder-gray-400 focus:outline-none focus:border-[#134074] focus:ring-2 focus:ring-[#134074]/20 transition-all duration-200"
