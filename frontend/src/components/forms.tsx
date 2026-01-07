@@ -2,6 +2,7 @@ import { useState } from 'react'
 import type { FormEvent, ChangeEvent } from 'react'
 import { jurosComposto, jurosCompostosMensal, jurosCompostosComAporte, jurosCompostosComAporteAnual } from '../utils/formulas'
 import { parseCurrency, applyCurrencyMask } from '../utils/utils'
+import ComparacaoAtivos from './comparacaoAtivos'
 
 interface FormProps {
     onCalculate: (data: {
@@ -15,6 +16,7 @@ interface FormProps {
 }
 
 export const Form = ({ onCalculate }: FormProps) => {
+    const [abaAtiva, setAbaAtiva] = useState<'calcular' | 'comparar'>('calcular')
     const [capital, setCapital] = useState<string>('')
     const [taxa, setTaxa] = useState<string>('')
     const [tempo, setTempo] = useState<string>('')
@@ -115,7 +117,34 @@ export const Form = ({ onCalculate }: FormProps) => {
                 </h2>
             </div>
 
-            <form onSubmit={handleSubmit} className="bg-[#e8f0f8] rounded-lg shadow-lg p-8">
+            <div className="bg-white rounded-lg shadow-lg overflow-hidden">
+                <div className="flex border-b border-gray-200">
+                    <button
+                        type="button"
+                        onClick={() => setAbaAtiva('calcular')}
+                        className={`flex-1 px-6 py-4 font-semibold transition-colors ${
+                            abaAtiva === 'calcular'
+                                ? 'bg-[#134074] text-white'
+                                : 'bg-gray-50 text-gray-700 hover:bg-gray-100'
+                        }`}
+                    >
+                        Calcular
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() => setAbaAtiva('comparar')}
+                        className={`flex-1 px-6 py-4 font-semibold transition-colors ${
+                            abaAtiva === 'comparar'
+                                ? 'bg-[#134074] text-white'
+                                : 'bg-gray-50 text-gray-700 hover:bg-gray-100'
+                        }`}
+                    >
+                        Comparar Ativos
+                    </button>
+                </div>
+
+                {abaAtiva === 'calcular' ? (
+                    <form onSubmit={handleSubmit} className="bg-[#e8f0f8] p-8">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                     <div className="space-y-6">
                         <div className="space-y-2">
@@ -220,7 +249,19 @@ export const Form = ({ onCalculate }: FormProps) => {
                         Calcular
                     </button>
                 </div>
-            </form>
+                    </form>
+                ) : (
+                    <div className="bg-[#e8f0f8] p-8">
+                        <ComparacaoAtivos 
+                            capitalInicial={parseCurrency(capital) || 10000}
+                            taxaJuros={parseFloat(taxa.replace(/\s/g, '').replace(',', '.')) || undefined}
+                            tempo={parseFloat(tempo.replace(/\s/g, '').replace(',', '.')) || undefined}
+                            unidadeTempo={unidadeTempo}
+                            aporteMensal={parseCurrency(aporteMensal) || 0}
+                        />
+                    </div>
+                )}
+            </div>
         </div>
     )
 }

@@ -90,7 +90,6 @@ export default function Resultado({ resultado, capital, taxa, tempo, unidadeTemp
             })
         }
         
-        // Garantir que o último ponto seja sempre incluído
         if (data[data.length - 1]?.periodo !== totalPeriodos) {
             let valorFinal: number
             let valorInvestidoFinal: number
