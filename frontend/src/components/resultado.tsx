@@ -12,7 +12,19 @@ interface ResultadoProps {
     aporteMensal: number
 }
 
-const CustomTooltip = ({ active, payload, label }: any) => {
+type TooltipPayloadItem = {
+    dataKey?: string
+    name?: string
+    value?: number | string
+}
+
+type CustomTooltipProps = {
+    active?: boolean
+    payload?: TooltipPayloadItem[]
+    label?: number | string
+}
+
+const CustomTooltip = ({ active, payload, label }: CustomTooltipProps) => {
     if (!active || !payload || !payload.length) {
         return null
     }
@@ -26,8 +38,8 @@ const CustomTooltip = ({ active, payload, label }: any) => {
     return (
         <div className="bg-white rounded-lg border border-gray-200 shadow-lg p-3 min-w-[180px]">
             <p className="font-semibold text-sm text-gray-700 mb-2">{`Período: ${label}`}</p>
-            {payload.map((item: any, index: number) => {
-                const color = getColor(item.dataKey)
+            {payload.map((item, index) => {
+                const color = getColor(item.dataKey ?? '')
                 return (
                     <div key={index} className="flex items-center gap-2 mb-1 last:mb-0">
                         <div 
@@ -288,4 +300,3 @@ export default function Resultado({ resultado, capital, taxa, tempo, unidadeTemp
         </div>
     )
 }
-

@@ -3,13 +3,26 @@ import { ResponsiveContainer } from "recharts"
 
 import { cn } from "@/utils/utils"
 
+type ThemeConfigItem = {
+  label?: React.ReactNode
+  icon?: React.ComponentType
+  theme: Record<string, string>
+}
+
+type ColorConfigItem = {
+  label?: React.ReactNode
+  icon?: React.ComponentType
+  color?: string
+}
+
+type ChartConfigItem = ThemeConfigItem | ColorConfigItem
+
+type ChartConfig = Record<string, ChartConfigItem>
+
 const ChartContainer = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement> & {
-    config: Record<string, {
-      label?: React.ReactNode
-      icon?: React.ComponentType
-    } & ({ color?: string } | { theme: Record<string, string> })>
+    config: ChartConfig
     children: React.ComponentProps<
       typeof ResponsiveContainer
     >["children"]
@@ -35,9 +48,9 @@ const ChartContainer = React.forwardRef<
 })
 ChartContainer.displayName = "Chart"
 
-const ChartStyle = ({ id, config }: { id: string; config: Record<string, any> }) => {
+const ChartStyle = ({ id, config }: { id: string; config: ChartConfig }) => {
   const colorConfig = Object.entries(config).filter(
-    ([_, config]) => config.theme || config.color
+    ([, itemConfig]) => ("theme" in itemConfig ? !!itemConfig.theme : !!itemConfig.color)
   )
 
   if (!colorConfig.length) {
@@ -48,10 +61,11 @@ const ChartStyle = ({ id, config }: { id: string; config: Record<string, any> })
     <style
       dangerouslySetInnerHTML={{
         __html: Object.entries(config)
-          .map(([key, itemConfig]: [string, any]) => {
-            const color = itemConfig.theme
-              ? itemConfig.theme[`hsl(var(--chart-${key}))`] || itemConfig.theme[key]
-              : itemConfig.color
+          .map(([key, itemConfig]) => {
+            const color =
+              "theme" in itemConfig
+                ? itemConfig.theme[`hsl(var(--chart-${key}))`] || itemConfig.theme[key]
+                : itemConfig.color
             return color
               ? [
                   `.chart-${id} [data-${key}="true"]`,
@@ -74,6 +88,15 @@ const ChartStyle = ({ id, config }: { id: string; config: Record<string, any> })
 const ChartTooltip = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement> & {
+    active?: boolean
+    payload?: Array<{
+      dataKey?: string | number
+      name?: React.ReactNode
+      value?: number | string
+      color?: string
+      payload?: Record<string, React.ReactNode>
+    }>
+    label?: React.ReactNode
     hideLabel?: boolean
     hideIndicator?: boolean
     indicator?: "line" | "dot" | "dashed"
@@ -93,7 +116,22 @@ const ChartTooltip = React.forwardRef<
       labelKey,
       nameKey,
       ...props
-    }: any,
+    }: React.HTMLAttributes<HTMLDivElement> & {
+      active?: boolean
+      payload?: Array<{
+        dataKey?: string | number
+        name?: React.ReactNode
+        value?: number | string
+        color?: string
+        payload?: Record<string, React.ReactNode>
+      }>
+      label?: React.ReactNode
+      hideLabel?: boolean
+      hideIndicator?: boolean
+      indicator?: "line" | "dot" | "dashed"
+      nameKey?: string
+      labelKey?: string
+    },
     ref
   ) => {
     if (!active || !payload?.length) {
@@ -111,12 +149,12 @@ const ChartTooltip = React.forwardRef<
       >
         {!hideLabel && (
           <div className="font-medium text-muted-foreground">
-            {labelKey ? payload[0]?.payload[labelKey] : label}
+            {labelKey ? payload[0]?.payload?.[labelKey] : label}
           </div>
         )}
-        {payload.map((item: any, index: number) => (
+        {payload.map((item, index) => (
           <div
-            key={item.dataKey + index}
+            key={`${String(item.dataKey)}-${index}`}
             className="flex items-center gap-2 [&>svg]:h-2.5 [&>svg]:w-2.5 [&>svg]:text-muted-foreground"
             style={
               {
@@ -147,7 +185,7 @@ const ChartTooltip = React.forwardRef<
               }
             >
               <div className="font-medium text-muted-foreground">
-                {nameKey ? item.payload[nameKey] : item.name}
+                {nameKey ? item.payload?.[nameKey] : item.name}
               </div>
               <div className="font-mono font-medium tabular-nums text-foreground">
                 {typeof item.value === "number"
@@ -227,4 +265,3 @@ export {
   ChartTooltipContent,
   ChartLegend,
 }
-
