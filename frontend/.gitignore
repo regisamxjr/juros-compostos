@@ -40,6 +40,9 @@ build
 *.temp
 .cache
 
+# Netlify
+.netlify
+
 # OS files
 Thumbs.db
 .DS_Store
