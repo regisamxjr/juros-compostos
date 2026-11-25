@@ -3,7 +3,7 @@ import { Bar, BarChart, CartesianGrid, Cell, ResponsiveContainer, Tooltip, XAxis
 import { jurosCompostosComAporte } from '../utils/formulas'
 import { applyCurrencyMask, parseCurrency } from '../utils/utils'
 import { ChartContainer } from './ui/chart'
-import { Field, MoneyInput, TextInput } from './field'
+import { AffixedInput, Field } from './field'
 
 const APORTES_OPCOES = [100, 300, 500, 1000, 2000, 5000, 10000]
 
@@ -96,7 +96,7 @@ export default function Meta() {
   }
 
   return (
-    <div className="bg-[#e8f0f8] p-6 md:p-8 space-y-6">
+    <div className="bg-gray-100 p-6 md:p-8 space-y-6">
       <div className="text-center space-y-1">
         <h3 className="text-2xl font-bold text-[#0b2545]">Sua meta pessoal</h3>
         <p className="text-sm text-gray-600">
@@ -106,8 +106,9 @@ export default function Meta() {
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Field id="meta-valor" label="Valor da meta" hint="Quanto você quer juntar">
-          <MoneyInput
+          <AffixedInput
             id="meta-valor"
+            prefix="R$"
             value={valorMeta}
             onChange={handleMetaChange}
             placeholder="0,00"
@@ -115,8 +116,9 @@ export default function Meta() {
         </Field>
 
         <Field id="meta-aporte" label="Seu aporte mensal" hint="Quanto pode guardar por mês">
-          <MoneyInput
+          <AffixedInput
             id="meta-aporte"
+            prefix="R$"
             value={aporteMensal}
             onChange={handleAporteChange}
             placeholder="0,00"
@@ -124,11 +126,8 @@ export default function Meta() {
         </Field>
 
         <Field id="meta-taxa" label="Taxa de juros" hint="Rendimento estimado ao ano">
-          <TextInput
+          <AffixedInput
             id="meta-taxa"
-            type="number"
-            min={0.1}
-            step={0.1}
             suffix="% a.a."
             value={taxaAnual}
             onChange={(e) => setTaxaAnual(e.target.value)}
@@ -158,7 +157,7 @@ export default function Meta() {
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <div className="bg-white rounded-2xl border border-[#d7e3ef] p-5 md:p-6">
+            <div className="bg-gray-50 rounded-2xl border border-gray-200 p-5 md:p-6">
               <h4 className="text-base font-semibold text-[#0b2545] mb-4">Todas as opções</h4>
               <ul className="space-y-2">
                 {dados.opcoes.map((opcao) => (
@@ -169,7 +168,7 @@ export default function Meta() {
                       className={`w-full flex items-center justify-between gap-3 rounded-xl px-4 py-3 text-left transition-colors ${
                         opcao.destaque
                           ? 'bg-[#134074] text-white'
-                          : 'bg-[#f4f8fb] text-[#0b2545] hover:bg-[#e8f0f8]'
+                          : 'bg-gray-100 text-[#0b2545] hover:bg-gray-200'
                       }`}
                     >
                       <span className="font-semibold">{opcao.label}/mês</span>
@@ -182,12 +181,9 @@ export default function Meta() {
               </ul>
             </div>
 
-            <div className="bg-white rounded-2xl border border-[#d7e3ef] p-5 md:p-6">
+            <div className="bg-gray-50 rounded-2xl border border-gray-200 p-5 md:p-6">
               <h4 className="text-base font-semibold text-[#0b2545] mb-4">Comparativo de tempo</h4>
-              <ChartContainer
-                config={{ meses: { label: 'Meses' } }}
-                className="h-[320px] w-full"
-              >
+              <ChartContainer className="h-[320px] w-full">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={dados.grafico} margin={{ top: 8, right: 8, left: 0, bottom: 8 }}>
                     <CartesianGrid strokeDasharray="3 3" className="stroke-gray-200" />
@@ -219,7 +215,7 @@ export default function Meta() {
           </div>
         </>
       ) : (
-        <div className="rounded-2xl bg-white border border-[#d7e3ef] p-6 text-center text-gray-600">
+        <div className="rounded-2xl bg-gray-50 border border-gray-200 p-6 text-center text-gray-600">
           Preencha meta, aporte e taxa para ver o resultado.
         </div>
       )}

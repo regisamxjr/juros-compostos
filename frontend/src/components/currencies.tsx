@@ -82,7 +82,7 @@ function CurrencySide({
 }) {
   return (
     <label className="relative flex min-w-0 flex-1 items-center gap-3 cursor-pointer">
-      <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#e8f0f8] text-xl">
+      <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-gray-100 text-xl">
         {currency ? flagEmoji(currency.iso_code) : '💱'}
       </span>
       <span className="min-w-0">
@@ -163,7 +163,7 @@ export default function Currencies() {
   }
 
   return (
-    <div className="bg-[#e8f0f8] p-5 md:p-8">
+    <div className="bg-gray-100 p-5 md:p-8">
       <div className="mx-auto w-full max-w-xl space-y-4">
         <div>
           <h3 className="text-2xl font-bold text-[#134074]">Converter</h3>
@@ -182,11 +182,11 @@ export default function Currencies() {
         </div>
 
         {loadingCurrencies ? (
-          <div className="rounded-2xl bg-white p-8 text-center text-[#134074] shadow-sm">
+          <div className="rounded-2xl bg-gray-50 p-8 text-center text-[#134074] shadow-sm">
             Carregando moedas...
           </div>
         ) : currenciesError ? (
-          <div className="space-y-3 rounded-2xl bg-white p-6 text-center shadow-sm">
+          <div className="space-y-3 rounded-2xl bg-gray-50 p-6 text-center shadow-sm">
             <p className="font-medium text-red-600">{currenciesError}</p>
             <button
               type="button"
@@ -198,7 +198,7 @@ export default function Currencies() {
           </div>
         ) : (
           <div className="relative space-y-3">
-            <section className="rounded-2xl bg-white p-4 shadow-sm">
+            <section className="rounded-2xl bg-gray-50 p-4 shadow-sm">
               <p className="mb-3 text-sm font-semibold text-[#0b2545]">Valor</p>
               <div className="flex items-center gap-3">
                 <CurrencySide
@@ -233,7 +233,7 @@ export default function Currencies() {
               </button>
             </div>
 
-            <section className="rounded-2xl bg-white p-4 shadow-sm">
+            <section className="rounded-2xl bg-gray-50 p-4 shadow-sm">
               <p className="mb-3 text-sm font-semibold text-[#0b2545]">Convertido</p>
               <div className="flex items-center gap-3">
                 <CurrencySide

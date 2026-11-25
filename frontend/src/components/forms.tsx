@@ -127,7 +127,7 @@ export const Form = ({ onCalculate }: FormProps) => {
         </h2>
       </div>
 
-      <div className="bg-white rounded-lg shadow-lg overflow-hidden">
+      <div className="bg-gray-100 rounded-lg shadow-lg overflow-hidden">
         <div className="flex border-b border-gray-200">
           <button
             type="button"
@@ -153,7 +153,7 @@ export const Form = ({ onCalculate }: FormProps) => {
         </div>
 
         {abaAtiva === 'calcular' ? (
-          <form onSubmit={handleSubmit} className="bg-white p-6 md:p-10">
+          <form onSubmit={handleSubmit} className="bg-gray-100 p-6 md:p-10">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-6 mb-8">
               <Field id="capital" label="Valor inicial">
                 <AffixedInput

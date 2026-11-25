@@ -36,7 +36,7 @@ const CustomTooltip = ({ active, payload, label }: CustomTooltipProps) => {
     }
 
     return (
-        <div className="bg-white rounded-lg border border-gray-200 shadow-lg p-3 min-w-[180px]">
+        <div className="bg-gray-100 rounded-lg border border-gray-200 shadow-lg p-3 min-w-[180px]">
             <p className="font-semibold text-sm text-gray-700 mb-2">{`Período: ${label}`}</p>
             {payload.map((item, index) => {
                 const color = getColor(item.dataKey ?? '')
@@ -134,17 +134,6 @@ export default function Resultado({ resultado, capital, taxa, tempo, unidadeTemp
         return data
     }, [capital, taxa, tempo, unidadeTempo, aporteMensal])
 
-    const chartConfig = {
-        totalJuros: {
-            label: "Total em juros",
-            color: "#f97316",
-        },
-        valorInvestido: {
-            label: "Valor Investido",
-            color: "#3b82f6",
-        },
-    }
-
     const yAxisDomain = useMemo(() => {
         const valores = chartData.map(d => d.totalJuros)
         const maxValor = Math.max(...valores, capital)
@@ -196,7 +185,7 @@ export default function Resultado({ resultado, capital, taxa, tempo, unidadeTemp
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
-                <div className="bg-white rounded-lg shadow-md p-6 border border-gray-200">
+                <div className="bg-gray-100 rounded-lg shadow-md p-6 border border-gray-200">
                     <h3 className="text-sm font-medium text-gray-600 mb-2">Valor Total</h3>
                     <p className="text-2xl font-bold text-[#0b2545]">
                         R$ {valoresCards.valorTotal.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
@@ -204,7 +193,7 @@ export default function Resultado({ resultado, capital, taxa, tempo, unidadeTemp
                     <p className="text-xs text-gray-500 mt-1">Valor final acumulado</p>
                 </div>
                 
-                <div className="bg-white rounded-lg shadow-md p-6 border border-gray-200">
+                <div className="bg-gray-100 rounded-lg shadow-md p-6 border border-gray-200">
                     <h3 className="text-sm font-medium text-gray-600 mb-2">Valor Total Investido</h3>
                     <p className="text-2xl font-bold text-[#3b82f6]">
                         R$ {valoresCards.valorTotalInvestido.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
@@ -212,7 +201,7 @@ export default function Resultado({ resultado, capital, taxa, tempo, unidadeTemp
                     <p className="text-xs text-gray-500 mt-1">Capital inicial + aportes</p>
                 </div>
                 
-                <div className="bg-white rounded-lg shadow-md p-6 border border-gray-200">
+                <div className="bg-gray-100 rounded-lg shadow-md p-6 border border-gray-200">
                     <h3 className="text-sm font-medium text-gray-600 mb-2">Juros Total</h3>
                     <p className="text-2xl font-bold text-[#f97316]">
                         R$ {valoresCards.jurosTotal.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
@@ -239,7 +228,7 @@ export default function Resultado({ resultado, capital, taxa, tempo, unidadeTemp
                     </div>
                 </div>
                 
-                <ChartContainer config={chartConfig} className="h-[400px] w-full">
+                <ChartContainer className="h-[400px] w-full">
                     <ResponsiveContainer width="100%" height="100%">
                         <AreaChart
                             data={chartData}

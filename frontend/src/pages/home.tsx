@@ -42,7 +42,7 @@ export default function Home() {
                     </div>
 
                     <div className="max-w-4xl mx-auto">
-                        <h2 className="text-2xl font-bold mb-4 text-[#0b2545]">
+                        <h2 className="mb-4 text-center text-2xl font-bold text-gray-700">
                             Tabela de Evolução
                         </h2>
                         <Tabela 

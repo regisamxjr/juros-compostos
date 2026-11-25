@@ -5,19 +5,15 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "dev:all": "npm run start --prefix ../backend & vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.1.18",
-    "class-variance-authority": "^0.7.1",
-    "clsx": "^2.1.1",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "recharts": "^3.6.0",
-    "tailwind-merge": "^3.4.0",
     "tailwindcss": "^4.1.18"
   },
   "devDependencies": {

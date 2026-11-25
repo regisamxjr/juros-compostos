@@ -14,17 +14,13 @@ O app tem três ferramentas:
 
 ## Como rodar
 
-Na raiz do projeto:
-
 ```bash
-# API de câmbio local (porta 3001)
-npm run start:backend
-
-# Frontend (porta 5173)
-npm run dev:frontend
+npm run dev --prefix frontend
 ```
 
-Depois abra: [http://127.0.0.1:5173](http://127.0.0.1:5173)
+Abra: [http://127.0.0.1:5173](http://127.0.0.1:5173)
+
+A API de câmbio (`/api/*`) roda localmente com as mesmas Netlify Functions.
 
 ## Deploy (Netlify)
 
@@ -33,15 +29,14 @@ Site: [planinvest.netlify.app](https://planinvest.netlify.app)
 - Base directory: `frontend`
 - Build: `npm run build`
 - Publish: `dist`
-- API de câmbio em produção via Netlify Functions (`/api/currencies`, `/api/rates`)
+- API: Netlify Functions (`/api/currencies`, `/api/rates`)
 
 Push na branch `main` dispara o deploy automático.
 
 ## Estrutura
 
 ```
-backend/                      → API local (dev) com cache
 frontend/                     → interface em React + Vite
-frontend/netlify/functions/   → API em produção (Netlify)
+frontend/netlify/functions/   → API de câmbio (local e produção)
 netlify.toml                  → config de build e publish
 ```
